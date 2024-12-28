@@ -1,33 +1,47 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 #include "functions.h"
 
 int main() {
-    FILE* input_file = fopen("inp.txt", "r");
+    	FILE* input_file = fopen("inp.txt", "r");
 
-    size_t num_atoms = read_Natoms(input_file);
+    	size_t num_atoms = read_Natoms(input_file);
 
-    printf("Number of atoms: %zu\n", num_atoms);
+    	printf("Number of atoms: %zu\n", num_atoms);
 
-    double** coord = (double**)malloc(num_atoms * sizeof(double*));
-    for (size_t i = 0; i < num_atoms; i++) {
-        coord[i] = (double*)malloc(3 * sizeof(double));
+    	double** coord = malloc_2d(num_atoms, 3);
+    	
+	double* mass = (double*)malloc(num_atoms * sizeof(double));
+
+    	read_molecule(input_file, num_atoms, coord, mass);
+
+	for (size_t i = 0; i < num_atoms; i++) {
+		printf("Atom %zu: Coordinates = (%.2f, %.2f, %.2f), Mass = %.2f\n", i + 1, coord[i][0], coord[i][1], coord[i][2], mass[i]);
     }
-    double* mass = (double*)malloc(num_atoms * sizeof(double));
 
-    read_molecule(input_file, num_atoms, coord, mass);
+	double** distances = malloc_2d(num_atoms, num_atoms);
 
-    for (size_t i = 0; i < num_atoms; i++) {
-        printf("Atom %zu: Coordinates = (%.2f, %.2f, %.2f), Mass = %.2f\n", i + 1, coord[i][0], coord[i][1], coord[i][2], mass[i]);
-    }
+	compute_distances(num_atoms, coord, distances);
+
+	printf("Distances:\n");
+	for (size_t i = 0; i < num_atoms; i++) {
+		for (size_t j = 0; j < num_atoms; j++) {
+			printf("%.2f ", distances[i][j]);
+		}
+		printf("\n");
+	}
+
+
 
 //FREEING ALLOCATED MEMORY
-    for (size_t i = 0; i < num_atoms; i++) {
-        free(coord[i]);
-    }
-    free(coord);
-    free(mass);
+    	free_2d(coord);
+    	free(mass);
+	free_2d(distances);
+	coord = NULL;
+	mass = NULL;
+	distances = NULL;
 
-    fclose(input_file);
-    return 0;
+    	fclose(input_file);
+    	return 0;
 }

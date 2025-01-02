@@ -89,3 +89,23 @@ double V(double epsilon, double sigma, size_t Natoms, double** distance) {
 	}
 	return pot_E;
 }
+
+//COMPUTE KINETIC ENERGY
+double T(size_t Natoms, double** velocity, double* mass) {
+	double kin_E = 0.0;
+
+	for (size_t i = 0; i < Natoms; i++) {
+		double v_sq = pow(velocity[i][0], 2) + pow(velocity[i][1], 2) + pow(velocity[i][2], 2);
+
+		kin_E += 0.5 * mass[i] * v_sq;
+	}
+	return kin_E;
+}
+
+//TOTAL ENERGY
+double E(double epsilon, double sigma, size_t Natoms, double** distance, double** velocity, double* mass) {
+	double pot_E = V(epsilon, sigma, Natoms, distance);
+	double kin_E = T(Natoms, velocity, mass);
+	double tot_E = kin_E + pot_E;
+	return tot_E;
+}

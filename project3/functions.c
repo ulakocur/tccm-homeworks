@@ -66,3 +66,26 @@ void compute_distances(size_t Natoms, double** coord, double** distances) {
 		}
 	}
 }
+
+//COMPUTE POTENTIAL ENERGY
+double V(double epsilon, double sigma, size_t Natoms, double** distance) {
+	double pot_E = 0.0;
+	
+	for (size_t i = 0; i < Natoms; i++) {
+		for (size_t j = i +1; j < Natoms; j++) {
+			double r = distance[i][j];
+			if (r == 0.0) {
+				printf("Error: Multiple atoms in the same position\n");
+        			exit(-1);
+			}
+			double s_r = sigma /r;
+			double s_r_6 = pow(s_r, 6);
+			double s_r_12 = pow(s_r, 12);
+	
+			double V_lj = 4 * epsilon * (s_r_12 - s_r_6);
+
+			pot_E += V_lj;
+		}
+	}
+	return pot_E;
+}

@@ -12,5 +12,7 @@ void compute_distances(size_t Natoms, double** coord, double** distances);
 double V(double epsilon, double sigma, size_t Natoms, double** distance);
 double T(size_t Natoms, double** velocity, double* mass);
 double E(double epsilon, double sigma, size_t Natoms, double** distance, double** velocity, double* mass);
+void compute_acc(size_t Natoms, double** coord, double* mass, double** distance, double** acceleration, double epsilon, double sigma);
 
 #endif
+

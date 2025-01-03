@@ -21,7 +21,7 @@ int main() {
 	printf("Distances:\n");
 	for (size_t i = 0; i < Natoms; i++) {
 		for (size_t j = 0; j < Natoms; j++) {
-			printf("%.2f ", distances[i][j]);
+			printf("%.4f ", distances[i][j]);
 		}
 		printf("\n");
 	}
@@ -44,16 +44,30 @@ int main() {
 
 	double tot_E = E(epsilon, sigma, Natoms, distances, velocity, mass);
 	printf("Total energy: %.6f J/mol\n", tot_E);
+
+	double** acceleration = malloc_2d(Natoms, 3); 
+	for (size_t i = 0; i < Natoms; i++) {
+                acceleration[i][0] = 0.0;
+                acceleration[i][1] = 0.0;
+                acceleration[i][2] = 0.0;
+        }
+	compute_acc(Natoms, coord, mass, distances, acceleration, epsilon, sigma);
+	for (size_t i = 0; i < Natoms; i++) {
+		printf("Atom %zu: Acceleration = (%.6f, %.6f, %.6f)\n",i+1, acceleration[i][0], acceleration[i][1], acceleration[i][2]);
+	}
+		
 	
 //FREEING ALLOCATED MEMORY
     	free_2d(coord);
     	free(mass);
 	free_2d(distances);
 	free_2d(velocity);
+	free_2d(acceleration);
 	coord = NULL;
 	mass = NULL;
 	distances = NULL;
 	velocity = NULL;
+	acceleration = NULL;
 
     	fclose(input_file);
     	return 0;

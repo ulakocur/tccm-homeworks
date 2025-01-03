@@ -109,3 +109,27 @@ double E(double epsilon, double sigma, size_t Natoms, double** distance, double*
 	double tot_E = kin_E + pot_E;
 	return tot_E;
 }
+
+//ACCELERATION
+void compute_acc(size_t Natoms, double** coord, double* mass, double** distance, double** acceleration, double epsilon, double sigma) {
+	for (size_t i = 0; i < Natoms; i++) {
+		for (size_t j = i + 1; j < Natoms; j++) {
+			double r = distance[i][j];
+			
+			double s_r = sigma /r;
+                        double s_r_6 = pow(s_r, 6);
+                        double s_r_12 = pow(s_r, 12);
+			double U = 24 * epsilon / r * (s_r_6 - 2 * s_r_12);
+	
+			double acc = -U / (mass[i] * r); //without the difference in x, y or z coordinates
+
+			acceleration[i][0] += acc * (coord[i][0] - coord[j][0]);
+			acceleration[i][1] += acc * (coord[i][1] - coord[j][1]);
+			acceleration[i][2] += acc * (coord[i][2] - coord[j][2]);
+			
+			acceleration[j][0] -= acc * (coord[i][0] - coord[j][0]);
+                        acceleration[j][1] -= acc * (coord[i][1] - coord[j][1]);
+                        acceleration[j][2] -= acc * (coord[i][2] - coord[j][2]);
+		}
+	}
+}

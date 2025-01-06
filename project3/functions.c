@@ -68,7 +68,7 @@ void compute_distances(size_t Natoms, double** coord, double** distances) {
 }
 
 //COMPUTE POTENTIAL ENERGY
-double V(double epsilon, double sigma, size_t Natoms, double** distance) {
+double V(size_t Natoms, double** distance) {
 	double pot_E = 0.0;
 	
 	for (size_t i = 0; i < Natoms; i++) {
@@ -78,11 +78,11 @@ double V(double epsilon, double sigma, size_t Natoms, double** distance) {
 				printf("Error: Multiple atoms in the same position\n");
         			exit(-1);
 			}
-			double s_r = sigma /r;
+			double s_r = SIGMA /r;
 			double s_r_6 = pow(s_r, 6);
 			double s_r_12 = pow(s_r, 12);
 	
-			double V_lj = 4 * epsilon * (s_r_12 - s_r_6);
+			double V_lj = 4 * EPSILON * (s_r_12 - s_r_6);
 
 			pot_E += V_lj;
 		}
@@ -103,33 +103,48 @@ double T(size_t Natoms, double** velocity, double* mass) {
 }
 
 //TOTAL ENERGY
-double E(double epsilon, double sigma, size_t Natoms, double** distance, double** velocity, double* mass) {
-	double pot_E = V(epsilon, sigma, Natoms, distance);
+double E(size_t Natoms, double** distance, double** velocity, double* mass) {
+	double pot_E = V(Natoms, distance);
 	double kin_E = T(Natoms, velocity, mass);
 	double tot_E = kin_E + pot_E;
 	return tot_E;
 }
 
 //ACCELERATION
-void compute_acc(size_t Natoms, double** coord, double* mass, double** distance, double** acceleration, double epsilon, double sigma) {
-	for (size_t i = 0; i < Natoms; i++) {
-		for (size_t j = i + 1; j < Natoms; j++) {
-			double r = distance[i][j];
-			
-			double s_r = sigma /r;
+void compute_acc(size_t Natoms, double** coord, double* mass, double** distance, double** acceleration) {
+        for (size_t i = 0; i < Natoms; i++) {
+                for (size_t j = i + 1; j < Natoms; j++) {
+                        double r = distance[i][j];
+
+                        double s_r = SIGMA /r;
                         double s_r_6 = pow(s_r, 6);
                         double s_r_12 = pow(s_r, 12);
-			double U = 24 * epsilon / r * (s_r_6 - 2 * s_r_12);
-	
-			double acc = -U / (mass[i] * r); //without the difference in x, y or z coordinates
+                        double U = 24 * EPSILON * (s_r_6 - 2 * s_r_12)/r;
 
-			acceleration[i][0] += acc * (coord[i][0] - coord[j][0]);
-			acceleration[i][1] += acc * (coord[i][1] - coord[j][1]);
-			acceleration[i][2] += acc * (coord[i][2] - coord[j][2]);
-			
-			acceleration[j][0] -= acc * (coord[i][0] - coord[j][0]);
-                        acceleration[j][1] -= acc * (coord[i][1] - coord[j][1]);
-                        acceleration[j][2] -= acc * (coord[i][2] - coord[j][2]);
+                        double acc = -U / r ; //without the difference in x, y or z coordinates
+
+			for (size_t d = 0; d < 3; d++) {
+                        	acceleration[i][d] += acc * (coord[i][d] - coord[j][d]) / mass[i];
+			}
+			for (size_t d = 0; d < 3; d++) {
+                        	acceleration[j][d] -= acc * (coord[i][d] - coord[j][d]) / mass[j];
+                	}
+		}
+        }
+}
+
+void update_position(size_t Natoms, double** coord, double** velocity, double** acceleration, double** distances, double dt) {
+	for (size_t i = 0; i < Natoms; i++) {
+		for (size_t d = 0; d < 3; d++) {
+			coord[i][d] += velocity[i][d] * dt + 0.5 * acceleration[i][d] * pow(dt, 2);
+		}
+	}
+}
+
+void update_velocity(size_t Natoms, double** coord, double** velocity, double** acceleration, double* mass, double** distances, double dt) {
+	for (size_t i = 0; i < Natoms; i++) {
+		for (size_t d = 0; d < 3; d++) {
+			velocity[i][d] += 0.5 * acceleration[i][d] * dt;
 		}
 	}
 }

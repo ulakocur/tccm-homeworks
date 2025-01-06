@@ -7,55 +7,86 @@ int main() {
     	FILE* input_file = fopen("inp.txt", "r");
 
     	size_t Natoms = read_Natoms(input_file);
-    	printf("Number of atoms: %zu\n", Natoms);
 
     	double** coord = malloc_2d(Natoms, 3);    	
 	double* mass = (double*)malloc(Natoms * sizeof(double));
     	read_molecule(input_file, Natoms, coord, mass);
-	for (size_t i = 0; i < Natoms; i++) {
-		printf("Atom %zu: Coordinates = (%.2f, %.2f, %.2f), Mass = %.2f\n", i + 1, coord[i][0], coord[i][1], coord[i][2], mass[i]);
-    }
+
+	fclose(input_file);
 
 	double** distances = malloc_2d(Natoms, Natoms);
 	compute_distances(Natoms, coord, distances);
-	printf("Distances:\n");
-	for (size_t i = 0; i < Natoms; i++) {
-		for (size_t j = 0; j < Natoms; j++) {
-			printf("%.4f ", distances[i][j]);
-		}
-		printf("\n");
-	}
 
-	double sigma = 0.3345;
-	double epsilon = 0.0661;
-	
-	double pot_E = V(epsilon, sigma, Natoms, distances);
-	printf("Total potential energy: %.6f J/mol\n", pot_E); 
+	double pot_E = V(Natoms, distances);
 
 	double** velocity = malloc_2d(Natoms, 3);
 	for (size_t i = 0; i < Natoms; i++) {
-		velocity[i][0] = 0.0;
-		velocity[i][1] = 0.0;
-		velocity[i][2] = 0.0;
+		for (size_t d = 0; d < 3; d++) {
+			velocity[i][d] = 0.0;
+		}
 	}
+
 	
 	double kin_E = T(Natoms, velocity, mass);
-	printf("Total kinetic energy: %.6f J/mol\n", kin_E);
 
-	double tot_E = E(epsilon, sigma, Natoms, distances, velocity, mass);
-	printf("Total energy: %.6f J/mol\n", tot_E);
+	double tot_E = E(Natoms, distances, velocity, mass);
 
 	double** acceleration = malloc_2d(Natoms, 3); 
 	for (size_t i = 0; i < Natoms; i++) {
-                acceleration[i][0] = 0.0;
-                acceleration[i][1] = 0.0;
-                acceleration[i][2] = 0.0;
-        }
-	compute_acc(Natoms, coord, mass, distances, acceleration, epsilon, sigma);
-	for (size_t i = 0; i < Natoms; i++) {
-		printf("Atom %zu: Acceleration = (%.6f, %.6f, %.6f)\n",i+1, acceleration[i][0], acceleration[i][1], acceleration[i][2]);
+		for (size_t d = 0; d < 3; d++) {
+                	acceleration[i][d] = 0.0;
+        	}
 	}
+
+	compute_acc(Natoms, coord, mass, distances, acceleration);
+
+	double dt = 0.2;
+        size_t tot_steps = 1000;
+        size_t M = 10;
+
+//VERLET ALGORITHM
+	
+	FILE* output_file = fopen("trajectory.xyz", "w");
+	if (output_file == NULL) {
+		printf("Error opening output file .\n");
+		exit(-1);
+	}
+	
+	fprintf(output_file, "%zu\n", Natoms);
+	fprintf(output_file, "#Potential energy = %.6f, Kinetic energy = %.6f, Total energy = %.6f \n", pot_E, kin_E, tot_E);	
+	for (size_t i = 0; i < Natoms; i++) {
+        	fprintf(output_file, "%s %.5f, %.5f, %.5f\n", ATOM_TYPE,  coord[i][0], coord[i][1], coord[i][2]);
+	}
+	
+	double prev_E = tot_E;
+
+	for (size_t step = 1; step < tot_steps; step++){
+		update_position(Natoms, coord, velocity, acceleration, distances, dt);
+		compute_distances(Natoms, coord, distances);
+		update_velocity(Natoms, coord, velocity, acceleration, mass, distances, dt);
+		for (size_t i = 0; i < Natoms; i++) {
+			for (size_t d = 0; d < 3; d++) {
+				acceleration[i][d] = 0.0;
+			}
+        	}
+		compute_acc(Natoms, coord, mass, distances, acceleration);
+		update_velocity(Natoms, coord, velocity, acceleration, mass, distances, dt);
+			
+		if (step % M == 0) {
+			double kin_E = T(Natoms, velocity, mass);
+			double pot_E = V(Natoms, distances);
+			double tot_E = E(Natoms, distances, velocity, mass);
+			double dE = tot_E - prev_E;
 		
+			fprintf(output_file, "%zu\n", Natoms);
+			fprintf(output_file, "#Potential energy = %.6f, Kinetic energy = %.6f, Total energy = %.6f, Energy difference = %.6f \n", pot_E, kin_E, tot_E, dE);
+			for (size_t i = 0; i < Natoms; i++) {
+                		fprintf(output_file, "%s %.5f, %.5f, %.5f\n", ATOM_TYPE,  coord[i][0], coord[i][1], coord[i][2]);
+	        		}
+			prev_E = tot_E;
+		}
+	}	
+	fclose(output_file);
 	
 //FREEING ALLOCATED MEMORY
     	free_2d(coord);
@@ -69,6 +100,6 @@ int main() {
 	velocity = NULL;
 	acceleration = NULL;
 
-    	fclose(input_file);
+//	fclose(input_file);
     	return 0;
 }

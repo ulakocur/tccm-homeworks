@@ -27,7 +27,7 @@ cd trexio-2.5.0
 make
 sudo make install
 
-## 2. Navigate into the project source directory:
+## 3. Navigate into the project source directory:
 
 cd tccm-homeworks/project1/src
 

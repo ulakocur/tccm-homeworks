@@ -61,12 +61,6 @@ Run the compiled program with the following command, replacing `/path/to/input_f
 ./hf_mp2_energy.exe '/path/to/input_file.h5'
 ```
 
-## 6. Optional: Compile an alternative version with less memory usage but longer computation time
-
-If you prefer a version that uses less memory but takes longer to compute, use the following command to compile:
-
-gcc -o hf_mp2_energy.exe main.c hf_energy.c data_gathering.c mp2_energy.c -ltrexio
-
 ## Notes
 
 - Ensure that all dependencies (HDF5 and TREXIO) are installed correctly before proceeding with the compilation.

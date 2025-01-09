@@ -7,7 +7,7 @@
 int main(int argc, char* argv[]) {
 	// Ensure an input file is provided
 	if (argc != 2) {
-		printf("Error: Input file needed as the argument\n");
+		printf("Error: Input file needed as the argument (usage: md_simulation [path_to_input_file)]\n");
 		exit(-1);
 	}
 	

@@ -33,9 +33,9 @@ make
 sudo make install
 ```
 
-## 3. Navigate into the project directory:
+## 3. Navigate into the source directory:
 ```bash
-cd tccm-homeworks/project1
+cd tccm-homeworks/project1/src
 ```
 
 ## 4. Compile the program

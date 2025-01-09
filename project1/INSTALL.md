@@ -50,7 +50,7 @@ Use the `Makefile` to compile the program. The `Makefile` provides options for d
 
 - **Alternative build (less memory usage, longer computation time)**:
   ```bash
-  make alternative
+  make low_memory
   ```
   This compiles the program with the alternative configuration.
 

@@ -44,8 +44,6 @@ int main() {
         size_t tot_steps = 1000;
         size_t M = 10;
 
-//VERLET ALGORITHM
-	
 	FILE* output_file = fopen("trajectory.xyz", "w");
 	if (output_file == NULL) {
 		printf("Error opening output file .\n");
@@ -64,11 +62,6 @@ int main() {
 		update_position(Natoms, coord, velocity, acceleration, distances, dt);
 		compute_distances(Natoms, coord, distances);
 		update_velocity(Natoms, coord, velocity, acceleration, mass, distances, dt);
-		for (size_t i = 0; i < Natoms; i++) {
-			for (size_t d = 0; d < 3; d++) {
-				acceleration[i][d] = 0.0;
-			}
-        	}
 		compute_acc(Natoms, coord, mass, distances, acceleration);
 		update_velocity(Natoms, coord, velocity, acceleration, mass, distances, dt);
 			
@@ -88,7 +81,6 @@ int main() {
 	}	
 	fclose(output_file);
 	
-//FREEING ALLOCATED MEMORY
     	free_2d(coord);
     	free(mass);
 	free_2d(distances);
@@ -100,6 +92,5 @@ int main() {
 	velocity = NULL;
 	acceleration = NULL;
 
-//	fclose(input_file);
     	return 0;
 }

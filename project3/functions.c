@@ -113,22 +113,24 @@ double E(size_t Natoms, double** distance, double** velocity, double* mass) {
 //ACCELERATION
 void compute_acc(size_t Natoms, double** coord, double* mass, double** distance, double** acceleration) {
         for (size_t i = 0; i < Natoms; i++) {
-                for (size_t j = i + 1; j < Natoms; j++) {
+		for (size_t d =0; d < 3; d++) {
+			acceleration[i][d] = 0.0;
+		}
+
+                for (size_t j = 0; j < Natoms; j++) {
+			if (i == j) continue; //No self-interaction
+
                         double r = distance[i][j];
 
                         double s_r = SIGMA /r;
                         double s_r_6 = pow(s_r, 6);
                         double s_r_12 = pow(s_r, 12);
+
                         double U = 24 * EPSILON * (s_r_6 - 2 * s_r_12)/r;
 
-                        double acc = -U / r ; //without the difference in x, y or z coordinates
-
 			for (size_t d = 0; d < 3; d++) {
-                        	acceleration[i][d] += acc * (coord[i][d] - coord[j][d]) / mass[i];
+                        	acceleration[i][d] -= U * (coord[i][d] - coord[j][d]) / (mass[i] * r);
 			}
-			for (size_t d = 0; d < 3; d++) {
-                        	acceleration[j][d] -= acc * (coord[i][d] - coord[j][d]) / mass[j];
-                	}
 		}
         }
 }

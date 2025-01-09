@@ -40,7 +40,7 @@ int main(int argc, char* argv[]) {
 	//Calculate potential energy
     	double pot_E = V(Natoms, distances);
 
-	//Initialzie velocity for all atoms to zero
+	//Initialize velocity for all atoms to zero
     	double** velocity = malloc_2d(Natoms, 3);
     	for (size_t i = 0; i < Natoms; i++) {
         	for (size_t d = 0; d < 3; d++) {
@@ -167,5 +167,7 @@ int main(int argc, char* argv[]) {
     	velocity = NULL;
     	acceleration = NULL;
 
+//Simulation complete message
+	printf("MD simulation complete.\n");
     	return 0;
 }

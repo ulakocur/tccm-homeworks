@@ -6,7 +6,7 @@
   `git clone https://github.com/ulakocur/tccm-homeworks`
 
 ## 2. Navigate into the project source directory
-  `cd tccm-homeworks/project1/src`
+  `cd tccm-homeworks/project3/src`
 
 ## 3. Compile the code
   Compile the program using `make` 

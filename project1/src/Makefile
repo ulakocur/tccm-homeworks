@@ -16,7 +16,7 @@ default: $(SRC) $(EXTRA_SRC)
 	$(CC) $(CFLAGS) -o ../$(EXEC) $(SRC) $(EXTRA_SRC) -ltrexio
 
 # low memory version (longer computation time)
-low_memory: $(SRC) $(MEM_EFFICIENT_SRC)
+low_memory: $(SRC) $(LOW_MEMORY_SRC)
 	$(CC) $(CFLAGS) -o ../$(EXEC) $(SRC) $(LOW_MEMORY_SRC) -ltrexio
 
 # Clean up compiled files

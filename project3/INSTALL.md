@@ -14,7 +14,7 @@
   Go back to the parent directory using `cd ..`
   
 ## 4. Run the program
-  You can run the program by using `./md_simulation [path_to_input_file]`
+  You can run the program in the directory in which the program is located by using `./md_simulation [path_to_input_file]`
   
   An example input file [inp.txt](tests/inp.txt) is provided and it can be run using `./md_simulation tests/inp.txt`
   

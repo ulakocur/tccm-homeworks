@@ -46,15 +46,18 @@ Use the `Makefile` to compile the program. The `Makefile` provides options for d
   ```bash
   make
   ```
-  This compiles the program into an executable named `hf_mp2_energy.exe`.
+  This compiles the program into an executable named `hf_mp2_energy.exe` in the project1 directory.
 
 - **Alternative build (less memory usage, longer computation time)**:
   ```bash
   make low_memory
   ```
   This compiles the program with the alternative configuration.
-
-## 5. Run the program
+## 5. Return to project1 directory
+```bash
+cd ..
+```
+## 6. Run the program
 
 Run the compiled program with the following command, replacing `/path/to/input_file.h5` with the path to your actual input file:
 ```bash

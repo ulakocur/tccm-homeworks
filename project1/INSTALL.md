@@ -1,5 +1,9 @@
 # Installation Instructions
 
+## Requirements
+  To install this program you need to have **C compiler (gcc)** and **Make** installed on your system
+
+
 To run this project locally, follow these steps on a bash-based system:
 
 ## 1. Clone the repository:

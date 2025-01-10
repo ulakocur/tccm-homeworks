@@ -13,8 +13,8 @@ The project is organized into three main components:
 1. **Data Gathering:** Extracts required data from TREXIO output files, implemented in `Data_Gathering.c`.
 2. **Hartree-Fock Energy Calculation:** Computes the Hartree-Fock energy, implemented in `hf_energy.c`.
 3. **Møller–Plesset Second-Order Perturbation Correction:** Computes the MP2 energy using either:
-   - `mp2_energy.c` (default approach).
-   - `mp2_hashmap.c` (memory-optimized approach).
+   - `mp2_hashmap.c` (default approach).
+   - `mp2_energy.c` (low-memory approach).
 
 ### Additional Files
 

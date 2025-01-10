@@ -59,7 +59,7 @@ int main(int argc, char* argv[]) {
 	//Set up simulation parameters, tot_steps = total number of steps, dt = time step, M = output frequency 
     	double dt = 0.2; 
     	size_t tot_steps = 1000;
-    	size_t M = 1;
+    	size_t M = 10;
 
 	// Open the output files (trajectory.xyz and full.out) and check if they opened correctly
     	FILE* output_file = fopen("trajectory.xyz", "w");
